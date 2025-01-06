@@ -1,0 +1,38 @@
+name: CI/CD Pipeline for Node.js App on Azure
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Also trigger on pull requests to main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Ensure this matches your Azure runtime
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test  # Placeholder: You'll add actual tests later
+
+      - name: Build Application
+        run: npm run build  # If you have a build step
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .  # Deploy the current directory
